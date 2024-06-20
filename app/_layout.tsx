@@ -1,6 +1,7 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const InitialLayout = () => {
   return (
@@ -13,10 +14,10 @@ const InitialLayout = () => {
 const RootLayoutNav = () => {
   return (
     <ActionSheetProvider>
-      <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="light" />
         <InitialLayout />
-      </>
+      </GestureHandlerRootView>
     </ActionSheetProvider>
   );
 };
