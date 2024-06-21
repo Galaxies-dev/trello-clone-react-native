@@ -10,31 +10,11 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { ModalType } from '@/types/enums';
 
-enum ModalType {
-  Login = 'login',
-  SignUp = 'signup',
-}
-
-const LOGIN_OPTIONS = [
-  {
-    text: 'Continue with Google',
-    icon: require('@/assets/images/login/google.png'),
-  },
-  {
-    text: 'Continue with Microsoft',
-    icon: require('@/assets/images/login/microsoft.png'),
-  },
-  {
-    text: 'Continue with Apple',
-    icon: require('@/assets/images/login/apple.png'),
-  },
-  {
-    text: 'Continue with Slack',
-    icon: require('@/assets/images/login/slack.png'),
-  },
-];
+import AuthModal from '@/components/AuthModal';
+import { createBoard } from '@/utils/supabaseRequests';
+import { useAuth } from '@clerk/clerk-expo';
 
 export default function Index() {
   const { top } = useSafeAreaInsets();
@@ -44,8 +24,11 @@ export default function Index() {
   const snapPoints = useMemo(() => ['33%'], []);
   const [authType, setAuthType] = useState<ModalType | null>(null);
 
+  const { userId } = useAuth();
+
   const openLink = async () => {
-    WebBrowser.openBrowserAsync('https://galaxies.dev');
+    // WebBrowser.openBrowserAsync('https://galaxies.dev');
+    createBoard('test', userId);
   };
 
   const openActionSheet = async () => {
@@ -89,6 +72,16 @@ export default function Index() {
     []
   );
 
+  const onAuthFinished = (success: boolean) => {
+    if (success) {
+      console.log('Auth success');
+
+      // bottomSheetModalRef.current?.close();
+    } else {
+      console.log('Auth failed');
+    }
+  };
+
   return (
     <BottomSheetModalProvider>
       <View style={[styles.container, { paddingTop: top + 30 }]}>
@@ -129,20 +122,7 @@ export default function Index() {
         backdropComponent={renderBackdrop}
         enableOverDrag={false}
         enablePanDownToClose>
-        <BottomSheetView style={[styles.modalContainer]}>
-          <TouchableOpacity style={styles.modalBtn}>
-            <Ionicons name="mail-outline" size={20} />
-            <Text style={styles.btnText}>
-              {authType === ModalType.Login ? 'Log in' : 'Sign up'} with Email
-            </Text>
-          </TouchableOpacity>
-          {LOGIN_OPTIONS.map((option, index) => (
-            <TouchableOpacity key={index} style={styles.modalBtn}>
-              <Image source={option.icon} style={styles.btnIcon} />
-              <Text style={styles.btnText}>{option.text}</Text>
-            </TouchableOpacity>
-          ))}
-        </BottomSheetView>
+        <AuthModal authType={authType} onAuthFinished={onAuthFinished} />
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );
@@ -153,10 +133,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.primary,
     alignItems: 'center',
-    // justifyContent: 'center',
   },
   image: {
-    // width: '100%',
     height: 450,
     paddingHorizontal: 40,
     resizeMode: 'contain',
@@ -193,23 +171,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     textDecorationLine: 'underline',
-  },
-  modalContainer: {
-    flex: 1,
-    alignItems: 'flex-start',
-    padding: 20,
-    gap: 20,
-  },
-  modalBtn: {
-    flexDirection: 'row',
-    gap: 14,
-    alignItems: 'center',
-    borderColor: '#fff',
-    borderWidth: 1,
-  },
-  btnIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
   },
 });
