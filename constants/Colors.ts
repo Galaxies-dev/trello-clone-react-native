@@ -1,3 +1,6 @@
 export const Colors = {
-  primary: '#1465de',
+  light: {
+    primary: '#1465de',
+  },
+  dark: {},
 };

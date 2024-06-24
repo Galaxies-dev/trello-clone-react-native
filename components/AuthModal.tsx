@@ -29,10 +29,9 @@ const LOGIN_OPTIONS = [
 
 interface AuthModalProps {
   authType: ModalType | null;
-  onAuthFinished: (success: boolean) => void;
 }
 
-const AuthModal = ({ authType, onAuthFinished }: AuthModalProps) => {
+const AuthModal = ({ authType }: AuthModalProps) => {
   useWarmUpBrowser();
   const { startOAuthFlow: googleAuth } = useOAuth({ strategy: AuthStrategy.Google });
   const { startOAuthFlow: microsoftAuth } = useOAuth({ strategy: AuthStrategy.Microsoft });
@@ -51,11 +50,9 @@ const AuthModal = ({ authType, onAuthFinished }: AuthModalProps) => {
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
         console.log('OAuth success');
-        onAuthFinished(true);
       }
     } catch (err) {
       console.error('OAuth error', err);
-      onAuthFinished(false);
     }
   };
 

@@ -27,8 +27,7 @@ export default function Index() {
   const { userId } = useAuth();
 
   const openLink = async () => {
-    // WebBrowser.openBrowserAsync('https://galaxies.dev');
-    createBoard('test', userId);
+    WebBrowser.openBrowserAsync('https://galaxies.dev');
   };
 
   const openActionSheet = async () => {
@@ -72,16 +71,6 @@ export default function Index() {
     []
   );
 
-  const onAuthFinished = (success: boolean) => {
-    if (success) {
-      console.log('Auth success');
-
-      // bottomSheetModalRef.current?.close();
-    } else {
-      console.log('Auth failed');
-    }
-  };
-
   return (
     <BottomSheetModalProvider>
       <View style={[styles.container, { paddingTop: top + 30 }]}>
@@ -91,7 +80,7 @@ export default function Index() {
           <TouchableOpacity
             style={[styles.btn, { backgroundColor: 'white' }]}
             onPress={() => showModal(ModalType.Login)}>
-            <Text style={[styles.btnText, { color: Colors.primary }]}>Log in</Text>
+            <Text style={[styles.btnText, { color: Colors.light.primary }]}>Log in</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btn]} onPress={() => showModal(ModalType.SignUp)}>
             <Text style={[styles.btnText, { color: '#fff' }]}>Sign Up</Text>
@@ -122,7 +111,7 @@ export default function Index() {
         backdropComponent={renderBackdrop}
         enableOverDrag={false}
         enablePanDownToClose>
-        <AuthModal authType={authType} onAuthFinished={onAuthFinished} />
+        <AuthModal authType={authType} />
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );
@@ -131,7 +120,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.light.primary,
     alignItems: 'center',
   },
   image: {
