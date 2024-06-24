@@ -9,6 +9,12 @@ const Layout = () => {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.light.primary,
+        headerStyle: {
+          backgroundColor: Colors.light.primary,
+        },
+        headerTitleStyle: {
+          color: 'white',
+        },
       }}>
       <Tabs.Screen
         name="boards"
