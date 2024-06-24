@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { SupabaseProvider } from '@/context/SupabaseContext';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
 
@@ -54,10 +55,12 @@ const InitialLayout = () => {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(authenticated)/(tabs)" options={{ headerShown: false }} />
-    </Stack>
+    <SupabaseProvider>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(authenticated)/(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </SupabaseProvider>
   );
 };
 

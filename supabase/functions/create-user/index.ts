@@ -14,6 +14,7 @@ serve(async (req: Request) => {
   try {
     const { id, email_addresses, first_name, image_url } = (await req.json()).data;
     const email = email_addresses[0].email_address;
+
     const { data, error } = await supabase
       .from('users')
       .insert({ id, email, avatar_url: image_url, first_name });

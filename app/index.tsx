@@ -13,8 +13,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { ModalType } from '@/types/enums';
 
 import AuthModal from '@/components/AuthModal';
-import { createBoard } from '@/utils/supabaseRequests';
-import { useAuth } from '@clerk/clerk-expo';
 
 export default function Index() {
   const { top } = useSafeAreaInsets();
@@ -23,8 +21,6 @@ export default function Index() {
 
   const snapPoints = useMemo(() => ['33%'], []);
   const [authType, setAuthType] = useState<ModalType | null>(null);
-
-  const { userId } = useAuth();
 
   const openLink = async () => {
     WebBrowser.openBrowserAsync('https://galaxies.dev');

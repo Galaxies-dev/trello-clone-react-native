@@ -1,12 +1,19 @@
 import { Colors } from '@/constants/Colors';
+import { useSupabase } from '@/context/SupabaseContext';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+
 const Page = () => {
   const [boardName, setBoardName] = useState('');
+  const { createBoard } = useSupabase();
+  const router = useRouter();
 
-  const onCreateBoard = async () => {};
+  const onCreateBoard = async () => {
+    await createBoard!(boardName);
+    router.dismiss();
+  };
 
   return (
     <View style={{ marginVertical: 10 }}>
