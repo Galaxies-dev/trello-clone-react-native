@@ -7,6 +7,7 @@ import { DefaultTheme } from '@react-navigation/native';
 
 const Layout = () => {
   const router = useRouter();
+
   return (
     <Stack>
       <Stack.Screen

@@ -3,7 +3,7 @@ import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Board } from '@/types/enums';
 import { Link, Stack, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
 const Page = () => {
@@ -18,15 +18,13 @@ const Page = () => {
   );
 
   const loadBoards = async () => {
-    console.log('Load boards');
     const data = await getBoards!();
-    console.log('board data', data);
     setBoards(data);
   };
 
   const ListItem = ({ item }: { item: Board }) => (
     <Link
-      href={`/(authenticated)/(tabs)/boards/${item.id}`}
+      href={`/(authenticated)/board/${item.id}?bg=${encodeURIComponent(item.background)}`}
       style={styles.listItem}
       key={`${item.id}`}
       asChild>

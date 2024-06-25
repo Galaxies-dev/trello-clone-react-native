@@ -11,6 +11,7 @@ type ProviderProps = {
   userId: string | null;
   createBoard: (title: string) => Promise<any>;
   getBoards: () => Promise<any>;
+  getBoardInfo: (boardId: string) => Promise<any>;
 };
 
 const SupabaseContext = createContext<Partial<ProviderProps>>({});
@@ -24,7 +25,6 @@ export const SupabaseProvider = ({ children }: any) => {
 
   const createBoard = async (title: string) => {
     const { data, error } = await client.from(BOARDS_TABLE).insert({ title, creator: userId });
-    console.log('data', data);
 
     if (error) {
       console.error('Error creating board:', error);
@@ -43,10 +43,16 @@ export const SupabaseProvider = ({ children }: any) => {
     return data;
   };
 
+  const getBoardInfo = async (boardId: string) => {
+    const { data } = await client.from(BOARDS_TABLE).select('*').match({ id: boardId }).single();
+    return data;
+  };
+
   const value = {
     userId,
     createBoard,
     getBoards,
+    getBoardInfo,
   };
 
   return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>;

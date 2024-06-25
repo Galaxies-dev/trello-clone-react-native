@@ -58,7 +58,7 @@ const InitialLayout = () => {
     <SupabaseProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(authenticated)/(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(authenticated)" options={{ headerShown: false }} />
       </Stack>
     </SupabaseProvider>
   );
@@ -67,6 +67,7 @@ const InitialLayout = () => {
 const RootLayoutNav = () => {
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
+      <StatusBar style="light" />
       <ActionSheetProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <StatusBar style="light" />
