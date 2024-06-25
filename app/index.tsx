@@ -76,7 +76,7 @@ export default function Index() {
           <TouchableOpacity
             style={[styles.btn, { backgroundColor: 'white' }]}
             onPress={() => showModal(ModalType.Login)}>
-            <Text style={[styles.btnText, { color: Colors.light.primary }]}>Log in</Text>
+            <Text style={[styles.btnText, { color: Colors.primary }]}>Log in</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btn]} onPress={() => showModal(ModalType.SignUp)}>
             <Text style={[styles.btnText, { color: '#fff' }]}>Sign Up</Text>
@@ -116,7 +116,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.primary,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
   },
   image: {

@@ -51,7 +51,7 @@ const Page = () => {
           <View
             style={{
               height: StyleSheet.hairlineWidth,
-              backgroundColor: Colors.light.grey,
+              backgroundColor: Colors.grey,
               marginStart: 50,
             }}
           />
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    borderColor: Colors.light.grey,
+    borderColor: Colors.grey,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },

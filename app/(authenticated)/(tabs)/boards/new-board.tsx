@@ -36,7 +36,7 @@ const Page = () => {
 
       <TouchableOpacity style={styles.btnItem}>
         <Text style={styles.btnItemText}>Background</Text>
-        <Ionicons name="chevron-forward" size={22} color={Colors.light.grey} />
+        <Ionicons name="chevron-forward" size={22} color={Colors.grey} />
       </TouchableOpacity>
     </View>
   );
@@ -46,17 +46,17 @@ const styles = StyleSheet.create({
   btnTextDisabled: {
     fontSize: 18,
     fontWeight: '500',
-    color: Colors.light.grey,
+    color: Colors.grey,
   },
   btnText: {
     fontSize: 18,
     fontWeight: '500',
-    color: Colors.light.primary,
+    color: Colors.primary,
   },
   input: {
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: Colors.light.grey,
+    borderColor: Colors.grey,
     backgroundColor: 'white',
     padding: 12,
     paddingHorizontal: 24,

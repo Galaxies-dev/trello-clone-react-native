@@ -8,9 +8,9 @@ const Layout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.primary,
+        tabBarActiveTintColor: Colors.primary,
         headerStyle: {
-          backgroundColor: Colors.light.primary,
+          backgroundColor: Colors.primary,
         },
         headerTitleStyle: {
           color: 'white',

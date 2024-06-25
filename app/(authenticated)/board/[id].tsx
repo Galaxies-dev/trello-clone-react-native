@@ -7,15 +7,16 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import BoardArea from '@/components/Board/BoardArea';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 const Page = () => {
   const { id, bg } = useLocalSearchParams<{ id: string; bg?: string }>();
   const { getBoardInfo } = useSupabase();
-  const [board, setBoard] = useState<Partial<Board>>({
-    background: bg || '#fff',
-  });
+  const [board, setBoard] = useState<Board>();
   const { top } = useSafeAreaInsets();
   const router = useRouter();
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     if (!id) return;
@@ -37,27 +38,23 @@ const Page = () => {
           onPress={() => {
             router.dismiss();
           }}>
-          <Ionicons name="close" size={24} color={Colors.light.fontLight} />
+          <Ionicons name="close" size={24} color={Colors.fontLight} />
         </TouchableOpacity>
 
         <View style={{ flex: 1 }}>
-          <Text style={{ color: Colors.light.fontLight, fontSize: 16 }}>{board?.title}</Text>
-          <Text style={{ color: Colors.light.fontLight, fontSize: 12 }}>Workspace of Simon</Text>
+          <Text style={{ color: Colors.fontLight, fontSize: 16 }}>{board?.title}</Text>
+          <Text style={{ color: Colors.fontLight, fontSize: 12 }}>Workspace of Simon</Text>
         </View>
 
         <View style={{ flexDirection: 'row', gap: 16 }}>
           <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="filter-circle-outline" size={26} color={Colors.light.fontLight} />
+            <Ionicons name="filter-circle-outline" size={26} color={Colors.fontLight} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="notifications-outline" size={26} color={Colors.light.fontLight} />
+            <Ionicons name="notifications-outline" size={26} color={Colors.fontLight} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {}}>
-            <MaterialCommunityIcons
-              name="dots-horizontal"
-              size={26}
-              color={Colors.light.fontLight}
-            />
+            <MaterialCommunityIcons name="dots-horizontal" size={26} color={Colors.fontLight} />
           </TouchableOpacity>
         </View>
       </View>
@@ -65,14 +62,20 @@ const Page = () => {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: board?.background }}>
+    <View
+      style={{
+        backgroundColor: bg,
+        paddingTop: headerHeight,
+        flex: 1,
+      }}>
       <Stack.Screen
         options={{
-          title: board.title,
+          title: board?.title,
           headerTransparent: true,
           header: () => <CustomHeader />,
         }}
       />
+      {board && <BoardArea board={board} />}
     </View>
   );
 };
@@ -80,7 +83,6 @@ const Page = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    // justifyContent: 'center',
     alignItems: 'center',
     gap: 14,
     backgroundColor: '',

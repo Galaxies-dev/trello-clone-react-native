@@ -1,8 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { Image } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, TouchableOpacity } from 'react-native';
 import { DefaultTheme } from '@react-navigation/native';
 
 const Layout = () => {
@@ -14,7 +13,7 @@ const Layout = () => {
         name="index"
         options={{
           headerStyle: {
-            backgroundColor: Colors.light.primary,
+            backgroundColor: Colors.primary,
           },
           headerTitle: () => (
             <Image
@@ -35,7 +34,7 @@ const Layout = () => {
           },
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="close" size={26} color={Colors.light.primary} />
+              <Ionicons name="close" size={26} color={Colors.primary} />
             </TouchableOpacity>
           ),
         }}

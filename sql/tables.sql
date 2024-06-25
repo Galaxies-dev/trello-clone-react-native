@@ -56,7 +56,7 @@ create table cards (
   position int not null default 0,
   title text default '',
   description text check (char_length(description) > 0),
-  assigned_to text NOT NULL REFERENCES users (id),
+  assigned_to text REFERENCES users (id),
   done boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

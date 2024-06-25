@@ -16,8 +16,6 @@ function createClerkSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey, {
     global: {
       fetch: async (url, options = {}) => {
-        console.log('fetch', url, options);
-
         const clerkToken = await window.Clerk.session?.getToken({
           template: 'supabase',
         });
