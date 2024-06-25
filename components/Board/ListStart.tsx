@@ -1,16 +1,14 @@
 import { Colors } from '@/constants/Colors';
 import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-export interface ListProps {
-  items: any[];
-  title: string | null;
+export interface ListStartProps {
   onCancel: () => void;
   onSave: (title: string) => void;
 }
 
-const ListStart = ({ items, title, onCancel, onSave }: ListProps) => {
-  const [listTitle, setListTitle] = useState(title || '');
+const ListStart = ({ onCancel, onSave }: ListStartProps) => {
+  const [listTitle, setListTitle] = useState('');
 
   return (
     <View style={styles.card}>

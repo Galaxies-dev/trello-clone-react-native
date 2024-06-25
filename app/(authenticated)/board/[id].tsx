@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Board } from '@/types/enums';
-import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,7 +32,7 @@ const Page = () => {
   };
 
   const CustomHeader = () => (
-    <BlurView intensity={80} tint="extraLight" style={{ paddingTop: top }}>
+    <BlurView intensity={80} tint="dark" style={{ paddingTop: top }}>
       <View style={[styles.headerContainer]}>
         <TouchableOpacity
           onPress={() => {

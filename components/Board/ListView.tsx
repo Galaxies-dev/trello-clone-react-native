@@ -3,11 +3,9 @@ import { useSupabase } from '@/context/SupabaseContext';
 import { Task, TaskList } from '@/types/enums';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import DraggableFlatList, {
   DragEndParams,
-  NestableDraggableFlatList,
-  NestableScrollContainer,
   RenderItemParams,
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
@@ -28,12 +26,10 @@ const ListView = ({ taskList }: ListViewProps) => {
 
   const loadListTasks = async () => {
     const data = await getListCards!(taskList.id);
-    console.log('🚀 ~ my tasks ~ data:', data);
     setTasks(data);
   };
 
   const onAddCard = async () => {
-    console.log('Adding card: ', newTask);
     const { data, error } = await addListCard!(
       taskList.id,
       taskList.board_id,
@@ -46,8 +42,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     }
     setTasks([...tasks, data]);
   };
-
-  const onPressMore = () => {};
 
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<Task>) => {
     return (
@@ -69,16 +63,16 @@ const ListView = ({ taskList }: ListViewProps) => {
   }, []);
 
   const onTaskDropped = async (params: DragEndParams<Task>) => {
-    console.log('Task dropped: ', params);
     const newData = params.data.map((item: any, index: number) => {
       return { ...item, position: index };
     });
-    console.log('New data: ', newData);
     setTasks(newData);
     newData.forEach(async (item: any) => {
       await updateCard!(item);
     });
   };
+
+  const onPressMore = () => {};
 
   return (
     <View style={{ paddingTop: 20, paddingHorizontal: 30 }}>
@@ -90,7 +84,6 @@ const ListView = ({ taskList }: ListViewProps) => {
           </TouchableOpacity>
         </View>
         <View>
-          {/* <NestableScrollContainer> */}
           <DraggableFlatList
             data={tasks}
             renderItem={renderItem}
@@ -99,7 +92,6 @@ const ListView = ({ taskList }: ListViewProps) => {
             containerStyle={{ paddingBottom: 4 }}
             contentContainerStyle={{ gap: 4 }}
           />
-          {/* </NestableScrollContainer> */}
           {isAdding && (
             <TextInput autoFocus style={styles.input} value={newTask} onChangeText={setNewTask} />
           )}
@@ -127,26 +119,7 @@ const ListView = ({ taskList }: ListViewProps) => {
           </View>
         )}
       </View>
-      {/* <NestableScrollContainer>
-        <NestableDraggableFlatList
-          data={item.items}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.key}
-          onDragEnd={onTaskDropped}
-          containerStyle={{ padding: 20 }}
-        />
-      </NestableScrollContainer> */}
     </View>
-    // <ScrollView key={index} style={{ flex: 1 }}>
-    // <NestableScrollContainer>
-    //    <NestableDraggableFlatList
-    //     data={item.items}
-    //     renderItem={renderItem}
-    //     keyExtractor={(item) => item.key}
-    //     onDragEnd={onTaskDropped}
-    //     containerStyle={{ padding: 20 }}
-    //   />
-    // </NestableScrollContainer>
   );
 };
 
@@ -182,10 +155,6 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: '#fff',
     borderRadius: 4,
-    // height: 100,
-    // width: 100,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 });
 
