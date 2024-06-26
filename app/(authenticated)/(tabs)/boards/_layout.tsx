@@ -2,7 +2,6 @@ import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { Image, TouchableOpacity } from 'react-native';
-import { DefaultTheme } from '@react-navigation/native';
 
 const Layout = () => {
   const router = useRouter();
@@ -26,17 +25,8 @@ const Layout = () => {
       <Stack.Screen
         name="new-board"
         options={{
-          title: 'Board',
+          headerShown: false,
           presentation: 'modal',
-          headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: DefaultTheme.colors.background,
-          },
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name="close" size={26} color={Colors.primary} />
-            </TouchableOpacity>
-          ),
         }}
       />
 

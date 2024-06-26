@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useRouter } from 'expo-router';
+import { Link, Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
@@ -34,10 +34,12 @@ const Page = () => {
         autoFocus
       />
 
-      <TouchableOpacity style={styles.btnItem}>
-        <Text style={styles.btnItemText}>Background</Text>
-        <Ionicons name="chevron-forward" size={22} color={Colors.grey} />
-      </TouchableOpacity>
+      <Link href={'/(authenticated)/(tabs)/boards/new-board/color-select'} asChild>
+        <TouchableOpacity style={styles.btnItem}>
+          <Text style={styles.btnItemText}>Background</Text>
+          <Ionicons name="chevron-forward" size={22} color={Colors.grey} />
+        </TouchableOpacity>
+      </Link>
     </View>
   );
 };
