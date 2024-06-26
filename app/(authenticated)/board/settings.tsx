@@ -1,28 +1,34 @@
+import UserListItem from '@/components/UserListItem';
 import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
-import { Board } from '@/types/enums';
+import { Board, User } from '@/types/enums';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { getBoardInfo, updateBoard, deleteBoard } = useSupabase();
+  const { getBoardInfo, updateBoard, deleteBoard, getBoardMember } = useSupabase();
   const router = useRouter();
   const [board, setBoard] = useState<Board>();
+  const [member, setMember] = useState<User[]>();
 
   useEffect(() => {
     if (!id) return;
-    loadBoardInfo();
+    loadInfo();
   }, [id]);
 
-  const loadBoardInfo = async () => {
+  const loadInfo = async () => {
     if (!id) return;
 
     const data = await getBoardInfo!(id);
     setBoard(data);
+
+    const member = await getBoardMember!(id);
+    console.log('board member:', member);
+    setMember(member);
   };
 
   const onDelete = async () => {
@@ -31,23 +37,24 @@ const Page = () => {
   };
 
   const onUpdateBoard = async () => {
-    console.log('update: ', board);
     const updated = await updateBoard!(board!);
-    console.log('🚀 ~ onUpdateBoard ~ updated:', updated);
     setBoard(updated);
   };
 
   return (
     <View>
       <View style={styles.container}>
-        <TextInput
-          value={board?.title}
-          onChangeText={(e) => setBoard({ ...board!, title: e })}
-          style={{ fontSize: 16, color: Colors.fontDark }}
-          returnKeyType="done"
-          enterKeyHint="done"
-          onEndEditing={onUpdateBoard}
-        />
+        <View>
+          <Text style={{ color: Colors.grey, fontSize: 12, marginBottom: 5 }}>Board name</Text>
+          <TextInput
+            value={board?.title}
+            onChangeText={(e) => setBoard({ ...board!, title: e })}
+            style={{ fontSize: 16, color: Colors.fontDark }}
+            returnKeyType="done"
+            enterKeyHint="done"
+            onEndEditing={onUpdateBoard}
+          />
+        </View>
       </View>
 
       <View style={styles.container}>
@@ -55,6 +62,15 @@ const Page = () => {
           <Ionicons name="person-outline" size={18} color={Colors.fontDark} />
           <Text style={{ fontWeight: 'bold', color: Colors.fontDark, fontSize: 16 }}>Members</Text>
         </View>
+
+        <FlatList
+          data={member}
+          keyExtractor={(item) => `${item.id}`}
+          renderItem={(item) => <UserListItem onPress={() => {}} element={item} />}
+          contentContainerStyle={{ gap: 8 }}
+          style={{ marginVertical: 12 }}
+        />
+
         <Link href={`/(authenticated)/board/invite?id=${id}`} asChild>
           <TouchableOpacity style={styles.fullBtn}>
             <Text style={{ fontSize: 16, color: Colors.fontLight }}>Invite...</Text>

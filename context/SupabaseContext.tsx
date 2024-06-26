@@ -17,7 +17,7 @@ type ProviderProps = {
   deleteBoard: (id: string) => Promise<any>;
   getBoardLists: (boardId: string) => Promise<any>;
   addBoardList: (boardId: string, title: string, position?: number) => Promise<any>;
-  updateBoardList: (list: TaskList) => Promise<any>;
+  updateBoardList: (list: TaskList, newname: string) => Promise<any>;
   deleteBoardList: (id: string) => Promise<any>;
   getListCards: (listId: string) => Promise<any>;
   addListCard: (listId: string, boardId: string, title: string, position?: number) => Promise<any>;
@@ -25,6 +25,7 @@ type ProviderProps = {
   deleteCard: (id: string) => Promise<any>;
   findUsers: (search: string) => Promise<any>;
   addUserToBoard: (boardId: string, userId: string) => Promise<any>;
+  getBoardMember: (boardId: string) => Promise<any>;
 };
 
 const SupabaseContext = createContext<Partial<ProviderProps>>({});
@@ -54,11 +55,14 @@ export const SupabaseProvider = ({ children }: any) => {
     // }
 
     // return data;
-    const { data } = await client.from(USER_BOARDS_TABLE).select(
-      `
+    const { data } = await client
+      .from(USER_BOARDS_TABLE)
+      .select(
+        `
       boards ( title, id, background )
     `
-    );
+      )
+      .eq('user_id', userId);
     const boards = data?.map((b: any) => b.boards);
 
     return boards || [];
@@ -107,8 +111,15 @@ export const SupabaseProvider = ({ children }: any) => {
       .single();
   };
 
-  const updateBoardList = async (list: TaskList) => {
-    return await client.from(LISTS_TABLE).update(list).match({ id: list.id });
+  const updateBoardList = async (list: TaskList, newname: string) => {
+    return await client
+      .from(LISTS_TABLE)
+      .update({
+        title: newname,
+      })
+      .match({ id: list.id })
+      .select('*')
+      .single();
   };
 
   const deleteBoardList = async (id: string) => {
@@ -117,8 +128,6 @@ export const SupabaseProvider = ({ children }: any) => {
 
   // CRUD Cards
   const addListCard = async (listId: string, boardId: string, title: string, position = 0) => {
-    console.log('Adding card:', { listId, boardId, title, position });
-
     return await client
       .from(CARDS_TABLE)
       .insert({ board_id: boardId, list_id: listId, title, position })
@@ -157,6 +166,16 @@ export const SupabaseProvider = ({ children }: any) => {
     });
   };
 
+  const getBoardMember = async (boardId: string) => {
+    const { data } = await client
+      .from(USER_BOARDS_TABLE)
+      .select('users(*)')
+      .eq('board_id', boardId);
+
+    const members = data?.map((b: any) => b.users);
+    return members;
+  };
+
   const value = {
     userId,
     createBoard,
@@ -174,6 +193,7 @@ export const SupabaseProvider = ({ children }: any) => {
     deleteCard,
     findUsers,
     addUserToBoard,
+    getBoardMember,
   };
 
   return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>;

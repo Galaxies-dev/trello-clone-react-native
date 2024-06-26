@@ -28,8 +28,12 @@ alter table user_boards enable row level security;
 create policy "Users can add their boards" on user_boards for
     insert to authenticated with check (true);
 
-create policy "Users can view boards" on user_boards for
-    select using ((requesting_user_id()) = user_id);
+create policy "Users can view boards"
+on user_boards
+to public
+using (
+  true
+);
 
 create policy "Users can delete their boards" on user_boards for
     delete using ((requesting_user_id()) = user_id);

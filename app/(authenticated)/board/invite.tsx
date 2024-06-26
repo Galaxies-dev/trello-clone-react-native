@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { DefaultTheme } from '@react-navigation/native';
 import { User } from '@/types/enums';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { Colors } from '@/constants/Colors';
+import UserListItem from '@/components/UserListItem';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -25,20 +25,6 @@ const Page = () => {
     await addUserToBoard!(id!, user.id);
     await router.dismiss();
   };
-  const listItem = ({ item }: { item: User }) => (
-    <TouchableOpacity
-      style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}
-      onPress={() => onAddUser(item)}>
-      <Image
-        source={{ uri: item.avatar_url }}
-        style={{ width: 40, height: 40, borderRadius: 40 }}
-      />
-      <View>
-        <Text style={{ fontSize: 16, fontWeight: 'semibold' }}>{item.first_name}</Text>
-        <Text style={{ color: Colors.grey }}>{item.email}</Text>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={{ flex: 1, padding: 8 }}>
@@ -62,7 +48,7 @@ const Page = () => {
       <FlatList
         data={userList}
         keyExtractor={(item) => `${item.id}`}
-        renderItem={listItem}
+        renderItem={(item) => <UserListItem onPress={onAddUser} element={item} />}
         style={{ marginTop: 60 + headerHeight }}
         contentContainerStyle={{ gap: 8 }}
       />
