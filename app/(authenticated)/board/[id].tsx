@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Board } from '@/types/enums';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -43,7 +43,9 @@ const Page = () => {
 
         <View style={{ flex: 1 }}>
           <Text style={{ color: Colors.fontLight, fontSize: 16 }}>{board?.title}</Text>
-          <Text style={{ color: Colors.fontLight, fontSize: 12 }}>Workspace of Simon</Text>
+          <Text style={{ color: Colors.fontLight, fontSize: 12 }}>
+            Workspace of {(board as any)?.users.first_name}
+          </Text>
         </View>
 
         <View style={{ flexDirection: 'row', gap: 16 }}>
@@ -53,9 +55,11 @@ const Page = () => {
           <TouchableOpacity onPress={() => {}}>
             <Ionicons name="notifications-outline" size={26} color={Colors.fontLight} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {}}>
-            <MaterialCommunityIcons name="dots-horizontal" size={26} color={Colors.fontLight} />
-          </TouchableOpacity>
+          <Link href={`/(authenticated)/board/settings?id=${id}`} asChild>
+            <TouchableOpacity>
+              <MaterialCommunityIcons name="dots-horizontal" size={26} color={Colors.fontLight} />
+            </TouchableOpacity>
+          </Link>
         </View>
       </View>
     </BlurView>

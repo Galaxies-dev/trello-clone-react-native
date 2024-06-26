@@ -19,6 +19,7 @@ const LOGIN_OPTIONS = [
   {
     text: 'Continue with Apple',
     icon: require('@/assets/images/login/apple.png'),
+    strategy: AuthStrategy.Apple,
   },
   {
     text: 'Continue with Slack',
@@ -36,12 +37,14 @@ const AuthModal = ({ authType }: AuthModalProps) => {
   const { startOAuthFlow: googleAuth } = useOAuth({ strategy: AuthStrategy.Google });
   const { startOAuthFlow: microsoftAuth } = useOAuth({ strategy: AuthStrategy.Microsoft });
   const { startOAuthFlow: slackAuth } = useOAuth({ strategy: AuthStrategy.Slack });
+  const { startOAuthFlow: appleAuth } = useOAuth({ strategy: AuthStrategy.Apple });
 
   const onSelectAuth = async (strategy: AuthStrategy) => {
     const selectedAuth = {
       [AuthStrategy.Google]: googleAuth,
       [AuthStrategy.Microsoft]: microsoftAuth,
       [AuthStrategy.Slack]: slackAuth,
+      [AuthStrategy.Apple]: appleAuth,
     }[strategy];
 
     try {

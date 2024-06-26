@@ -4,11 +4,12 @@ import { useSupabase } from '@/context/SupabaseContext';
 import { Board } from '@/types/enums';
 import { Link, Stack, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from 'react-native';
 
 const Page = () => {
   const { getBoards } = useSupabase();
   const [boards, setBoards] = useState<Board[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -19,6 +20,7 @@ const Page = () => {
 
   const loadBoards = async () => {
     const data = await getBoards!();
+    console.log('🚀 ~ loadBoards ~ data:', data);
     setBoards(data);
   };
 
@@ -43,7 +45,7 @@ const Page = () => {
         }}
       />
       <FlatList
-        contentContainerStyle={styles.list}
+        contentContainerStyle={boards.length > 0 && styles.list}
         data={boards}
         keyExtractor={(item) => `${item.id}`}
         renderItem={ListItem}
@@ -56,6 +58,7 @@ const Page = () => {
             }}
           />
         )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadBoards} />}
       />
     </View>
   );

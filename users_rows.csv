@@ -1,0 +1,4 @@
+id,username,first_name,email,avatar_url
+test1,,Dan,dan@gmail.com,https://randomuser.me/api/portraits/men/12.jpg
+test2,,Danilo,danilo@gmail.com,https://randomuser.me/api/portraits/men/56.jpg
+test3,,Isolde,isolde@gmail.com,https://randomuser.me/api/portraits/women/56.jpg

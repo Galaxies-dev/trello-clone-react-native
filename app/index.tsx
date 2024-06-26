@@ -5,7 +5,6 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as WebBrowser from 'expo-web-browser';
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';

@@ -7,6 +7,7 @@ export enum AuthStrategy {
   Google = 'oauth_google',
   Microsoft = 'oauth_microsoft',
   Slack = 'oauth_slack',
+  Apple = 'oauth_apple',
 }
 
 export interface Board {
@@ -40,4 +41,12 @@ export interface Task {
   assigned_to: null;
   done: boolean;
   created_at: string;
+}
+
+export interface User {
+  avatar_url: string;
+  email: string;
+  first_name: string;
+  id: string;
+  username: null;
 }

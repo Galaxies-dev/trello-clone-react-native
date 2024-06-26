@@ -2,5 +2,5 @@ export const Colors = {
   primary: '#1465de',
   grey: '#A6A3AF',
   fontLight: '#fff',
-  fontDark: '#000',
+  fontDark: '#292929',
 };
