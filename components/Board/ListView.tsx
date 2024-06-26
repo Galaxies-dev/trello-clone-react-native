@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import { useSupabase } from '@/context/SupabaseContext';
+import { CARDS_TABLE, useSupabase } from '@/context/SupabaseContext';
 import { Task, TaskList } from '@/types/enums';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { DefaultTheme } from '@react-navigation/native';
+import { client } from '@/utils/supabaseClient';
 
 export interface ListViewProps {
   taskList: TaskList;
@@ -32,7 +33,53 @@ const ListView = ({ taskList }: ListViewProps) => {
 
   useEffect(() => {
     loadListTasks();
+    console.log('create subscription');
+
+    const subscription = client
+      .channel(`card-changes-${taskList.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: CARDS_TABLE },
+        handleRealtimeChanges
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleRealtimeChanges = (update: any) => {
+    console.log('REALTIME UPDATE:', update);
+    const record = update.new?.id ? update.new : update.old;
+    const event = update.eventType;
+
+    if (!record) return;
+
+    if (event === 'INSERT') {
+      setTasks((prev) => {
+        console.log('🚀 ~ handleRealtimeChanges ~ prev:', prev);
+
+        return [...prev, record];
+      });
+    } else if (event === 'UPDATE') {
+      setTasks((prev) => {
+        return prev
+          .map((task) => {
+            if (task.id === record.id) {
+              return record;
+            }
+            return task;
+          })
+          .sort((a, b) => a.position - b.position);
+      });
+    } else if (event === 'DELETE') {
+      // const updatedTasks = tasks.filter((task) => task.id !== record.id);
+      // setTasks(updatedTasks);
+    } else {
+      console.log('Unhandled event', event);
+    }
+  };
 
   const loadListTasks = async () => {
     const data = await getListCards!(taskList.id);
@@ -50,7 +97,7 @@ const ListView = ({ taskList }: ListViewProps) => {
       setIsAdding(false);
       setNewTask('');
     }
-    setTasks([...tasks, data]);
+    // setTasks([...tasks, data]);
   };
 
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<Task>) => {
@@ -76,7 +123,7 @@ const ListView = ({ taskList }: ListViewProps) => {
     const newData = params.data.map((item: any, index: number) => {
       return { ...item, position: index };
     });
-    setTasks(newData);
+    // setTasks(newData);
     newData.forEach(async (item: any) => {
       await updateCard!(item);
     });

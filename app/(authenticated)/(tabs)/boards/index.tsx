@@ -13,7 +13,6 @@ const Page = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('Hello, I am focused!');
       loadBoards();
     }, [])
   );

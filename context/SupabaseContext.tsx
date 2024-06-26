@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { client } from '@/utils/supabaseClient';
 import { useAuth } from '@clerk/clerk-expo';
 import { Board, Task, TaskList } from '@/types/enums';
@@ -36,6 +36,18 @@ export function useSupabase() {
 
 export const SupabaseProvider = ({ children }: any) => {
   const { userId } = useAuth();
+
+  useEffect(() => {
+    setRealtimeAuth();
+  }, []);
+
+  const setRealtimeAuth = async () => {
+    const clerkToken = await window.Clerk.session?.getToken({
+      template: 'supabase',
+    });
+
+    client.realtime.setAuth(clerkToken!);
+  };
 
   const createBoard = async (title: string) => {
     const { data, error } = await client.from(BOARDS_TABLE).insert({ title, creator: userId });

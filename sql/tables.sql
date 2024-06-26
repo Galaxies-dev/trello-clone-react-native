@@ -65,6 +65,10 @@ create table cards (
 alter table cards replica identity full;
 alter table lists replica identity full;
 
+alter publication supabase_realtime add table cards;
+alter publication supabase_realtime add table lists;
+
+
 -- Function to get all user boards
 create or replace function get_boards_for_authenticated_user()
 returns setof bigint
