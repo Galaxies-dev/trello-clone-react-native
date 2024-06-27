@@ -58,10 +58,8 @@ const BoardArea = ({ board }: BoardAreaProps) => {
         ref={ref}
         onProgressChange={progress}
         defaultScrollOffsetValue={scrollOffsetValue}
-        style={{ width: '100%' }}
         data={data}
         pagingEnabled={true}
-        onSnapToItem={(index) => console.log('current index:', index)}
         renderItem={({ index, item }: any) => (
           <>
             {item.id && <ListView key={index} taskList={item as TaskList} />}

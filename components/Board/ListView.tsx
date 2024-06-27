@@ -4,11 +4,7 @@ import { Task, TaskList } from '@/types/enums';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, Image } from 'react-native';
-import DraggableFlatList, {
-  DragEndParams,
-  RenderItemParams,
-  ScaleDecorator,
-} from 'react-native-draggable-flatlist';
+import DraggableFlatList, { DragEndParams } from 'react-native-draggable-flatlist';
 import * as Haptics from 'expo-haptics';
 import {
   BottomSheetBackdrop,
@@ -19,6 +15,7 @@ import { DefaultTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '@clerk/clerk-expo';
+import ListItem from '@/components/Board/ListItem';
 
 export interface ListViewProps {
   taskList: TaskList;
@@ -33,7 +30,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     updateBoardList,
     getRealtimeCardSubscription,
     uploadFile,
-    getFileFromPath,
   } = useSupabase();
   const [isAdding, setIsAdding] = useState(false);
   const [newTask, setNewTask] = useState('');
@@ -76,8 +72,8 @@ const ListView = ({ taskList }: ListViewProps) => {
           .sort((a, b) => a.position - b.position);
       });
     } else if (event === 'DELETE') {
-      // const updatedTasks = tasks.filter((task) => task.id !== record.id);
-      // setTasks(updatedTasks);
+      const updatedTasks = tasks.filter((task) => task.id !== record.id);
+      setTasks(updatedTasks);
     } else {
       console.log('Unhandled event', event);
     }
@@ -101,52 +97,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     }
     // setTasks([...tasks, data]);
   };
-
-  const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<Task>) => {
-    const [imagePath, setImagePath] = useState<string>('');
-    if (item.image_url) {
-      getFileFromPath!(item.image_url).then((path) => {
-        if (path) {
-          setImagePath(path);
-        }
-      });
-    }
-    return (
-      <ScaleDecorator>
-        <TouchableOpacity
-          activeOpacity={1}
-          onLongPress={drag}
-          disabled={isActive}
-          style={[
-            styles.rowItem,
-            {
-              opacity: isActive ? 0.5 : 1,
-            },
-          ]}>
-          <>
-            {item.image_url && (
-              <>
-                {imagePath && (
-                  <Image
-                    source={{ uri: imagePath }}
-                    style={{
-                      width: '100%',
-                      height: 200,
-                      borderRadius: 4,
-                      backgroundColor: '#f3f3f3',
-                    }}
-                  />
-                )}
-
-                <Text>{item.title}</Text>
-              </>
-            )}
-            {!item.image_url && <Text>{item.title}</Text>}
-          </>
-        </TouchableOpacity>
-      </ScaleDecorator>
-    );
-  }, []);
 
   const onTaskDropped = async (params: DragEndParams<Task>) => {
     const newData = params.data.map((item: any, index: number) => {
@@ -178,7 +128,6 @@ const ListView = ({ taskList }: ListViewProps) => {
 
     if (!result.canceled) {
       const img = result.assets[0];
-      console.log('🚀 ~ onSelectImage ~ img:', img);
       const base64 = await FileSystem.readAsStringAsync(img.uri, { encoding: 'base64' });
       const fileName = `${new Date().getTime()}-${userId}.${img.type === 'image' ? 'png' : 'mp4'}`;
       const filePath = `${taskList.board_id}/${fileName}`;
@@ -186,14 +135,7 @@ const ListView = ({ taskList }: ListViewProps) => {
       const storagePath = await uploadFile!(filePath, base64, contentType);
 
       if (storagePath) {
-        const { data } = await addListCard!(
-          taskList.id,
-          taskList.board_id,
-          fileName,
-          tasks.length,
-          storagePath
-        );
-        console.log('🚀 ~ after add card ~ data:', data);
+        await addListCard!(taskList.id, taskList.board_id, fileName, tasks.length, storagePath);
       }
     }
   };
@@ -213,56 +155,69 @@ const ListView = ({ taskList }: ListViewProps) => {
 
   return (
     <BottomSheetModalProvider>
-      <View style={{ paddingTop: 20, paddingHorizontal: 30 }}>
-        <View style={styles.card}>
+      <View
+        style={{
+          paddingTop: 20,
+          paddingHorizontal: 30,
+          maxHeight: '90%',
+        }}>
+        <View style={[styles.card]}>
           <View style={styles.header}>
             <Text style={styles.listTitle}>{listName}</Text>
             <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()}>
               <MaterialCommunityIcons name="dots-horizontal" size={22} color={Colors.grey} />
             </TouchableOpacity>
           </View>
-          <View>
-            <DraggableFlatList
-              data={tasks}
-              renderItem={renderItem}
-              keyExtractor={(item) => `${item.id}`}
-              onDragEnd={onTaskDropped}
-              onDragBegin={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-              onPlaceholderIndexChange={() =>
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-              }
-              containerStyle={{ paddingBottom: 4 }}
-              contentContainerStyle={{ gap: 4 }}
-            />
+          <DraggableFlatList
+            data={tasks}
+            renderItem={ListItem}
+            keyExtractor={(item) => `${item.id}`}
+            onDragEnd={onTaskDropped}
+            onDragBegin={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            onPlaceholderIndexChange={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            containerStyle={{
+              paddingBottom: 16,
+              maxHeight: '85%',
+            }}
+            contentContainerStyle={{ gap: 4 }}
+          />
+          {isAdding && (
+            <TextInput autoFocus style={styles.input} value={newTask} onChangeText={setNewTask} />
+          )}
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 8,
+              marginBottom: 8,
+            }}>
+            {!isAdding && (
+              <>
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                  onPress={() => setIsAdding(true)}>
+                  <Ionicons name="add" size={14} />
+                  <Text style={{ fontSize: 12 }}>Add card</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onSelectImage}>
+                  <Ionicons name="image-outline" size={18} />
+                </TouchableOpacity>
+              </>
+            )}
             {isAdding && (
-              <TextInput autoFocus style={styles.input} value={newTask} onChangeText={setNewTask} />
+              <>
+                <TouchableOpacity onPress={() => setIsAdding(false)}>
+                  <Text style={{ color: Colors.primary, fontSize: 14 }}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onAddCard}>
+                  <Text style={{ color: Colors.primary, fontSize: 14, fontWeight: 'bold' }}>
+                    Add
+                  </Text>
+                </TouchableOpacity>
+              </>
             )}
           </View>
-          {!isAdding && (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 8 }}>
-              <TouchableOpacity
-                style={{ flexDirection: 'row', alignItems: 'center' }}
-                onPress={() => setIsAdding(true)}>
-                <Ionicons name="add" size={14} />
-                <Text style={{ fontSize: 12 }}>Add card</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onSelectImage}>
-                <Ionicons name="image-outline" size={18} />
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {isAdding && (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 8 }}>
-              <TouchableOpacity onPress={() => setIsAdding(false)}>
-                <Text style={{ color: Colors.primary, fontSize: 14 }}>Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={onAddCard}>
-                <Text style={{ color: Colors.primary, fontSize: 14, fontWeight: 'bold' }}>Add</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
       </View>
       <BottomSheetModal
@@ -303,8 +258,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3EFFC',
     borderRadius: 4,
     padding: 6,
+    // height: '100%',
     marginBottom: 16,
-    width: '100%',
+    // width: '100%',
+    // overflow: 'scroll',
+    // flex: 0,
+    // flexGrow: 1,
   },
   header: {
     flexDirection: 'row',
@@ -325,11 +284,6 @@ const styles = StyleSheet.create({
   listTitle: {
     paddingVertical: 8,
     fontWeight: '500',
-  },
-  rowItem: {
-    padding: 8,
-    backgroundColor: '#fff',
-    borderRadius: 4,
   },
   deleteBtn: {
     backgroundColor: '#fff',
