@@ -35,6 +35,7 @@ type ProviderProps = {
   findUsers: (search: string) => Promise<any>;
   addUserToBoard: (boardId: string, userId: string) => Promise<any>;
   getBoardMember: (boardId: string) => Promise<any>;
+  getRealtimeCardSubscription: (id: string, handleRealtimeChanges: (update: any) => void) => any;
   uploadFile: (
     filePath: string,
     base64: string,
@@ -209,6 +210,20 @@ export const SupabaseProvider = ({ children }: any) => {
     return members;
   };
 
+  const getRealtimeCardSubscription = (
+    id: string,
+    handleRealtimeChanges: (update: any) => void
+  ) => {
+    return client
+      .channel(`card-changes-${id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: CARDS_TABLE },
+        handleRealtimeChanges
+      )
+      .subscribe();
+  };
+
   const uploadFile = async (filePath: string, base64: string, contentType: string) => {
     const { data } = await client.storage
       .from(FILES_BUCKET)
@@ -245,6 +260,7 @@ export const SupabaseProvider = ({ children }: any) => {
     findUsers,
     addUserToBoard,
     getBoardMember,
+    getRealtimeCardSubscription,
     uploadFile,
     getFileFromPath,
   };

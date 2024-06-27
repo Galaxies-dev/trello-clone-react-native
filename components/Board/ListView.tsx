@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import { CARDS_TABLE, useSupabase } from '@/context/SupabaseContext';
+import { useSupabase } from '@/context/SupabaseContext';
 import { Task, TaskList } from '@/types/enums';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,7 +16,6 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { DefaultTheme } from '@react-navigation/native';
-import { client } from '@/utils/supabaseClient';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '@clerk/clerk-expo';
@@ -32,6 +31,7 @@ const ListView = ({ taskList }: ListViewProps) => {
     updateCard,
     deleteBoardList,
     updateBoardList,
+    getRealtimeCardSubscription,
     uploadFile,
     getFileFromPath,
   } = useSupabase();
@@ -46,14 +46,7 @@ const ListView = ({ taskList }: ListViewProps) => {
   useEffect(() => {
     loadListTasks();
 
-    const subscription = client
-      .channel(`card-changes-${taskList.id}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: CARDS_TABLE },
-        handleRealtimeChanges
-      )
-      .subscribe();
+    const subscription = getRealtimeCardSubscription!(taskList.id, handleRealtimeChanges);
 
     return () => {
       subscription.unsubscribe();
@@ -69,8 +62,6 @@ const ListView = ({ taskList }: ListViewProps) => {
 
     if (event === 'INSERT') {
       setTasks((prev) => {
-        console.log('🚀 ~ handleRealtimeChanges ~ prev:', prev);
-
         return [...prev, record];
       });
     } else if (event === 'UPDATE') {
@@ -114,9 +105,7 @@ const ListView = ({ taskList }: ListViewProps) => {
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<Task>) => {
     const [imagePath, setImagePath] = useState<string>('');
     if (item.image_url) {
-      // console.log('🚀 ~ load item image:', item);
       getFileFromPath!(item.image_url).then((path) => {
-        console.log('image path:', path);
         if (path) {
           setImagePath(path);
         }
