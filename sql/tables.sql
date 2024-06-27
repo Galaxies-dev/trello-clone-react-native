@@ -58,6 +58,7 @@ create table cards (
   description text check (char_length(description) > 0),
   assigned_to text REFERENCES users (id),
   done boolean default false,
+  image_url text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

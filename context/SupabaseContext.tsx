@@ -2,11 +2,14 @@ import { createContext, useContext, useEffect } from 'react';
 import { client } from '@/utils/supabaseClient';
 import { useAuth } from '@clerk/clerk-expo';
 import { Board, Task, TaskList } from '@/types/enums';
+import { decode } from 'base64-arraybuffer';
+
 export const BOARDS_TABLE = 'boards';
 export const USER_BOARDS_TABLE = 'user_boards';
 export const LISTS_TABLE = 'lists';
 export const CARDS_TABLE = 'cards';
 export const USERS_TABLE = 'users';
+export const FILES_BUCKET = 'files';
 
 type ProviderProps = {
   userId: string | null;
@@ -20,12 +23,24 @@ type ProviderProps = {
   updateBoardList: (list: TaskList, newname: string) => Promise<any>;
   deleteBoardList: (id: string) => Promise<any>;
   getListCards: (listId: string) => Promise<any>;
-  addListCard: (listId: string, boardId: string, title: string, position?: number) => Promise<any>;
+  addListCard: (
+    listId: string,
+    boardId: string,
+    title: string,
+    position?: number,
+    image_url?: string | null
+  ) => Promise<any>;
   updateCard: (task: Task) => Promise<any>;
   deleteCard: (id: string) => Promise<any>;
   findUsers: (search: string) => Promise<any>;
   addUserToBoard: (boardId: string, userId: string) => Promise<any>;
   getBoardMember: (boardId: string) => Promise<any>;
+  uploadFile: (
+    filePath: string,
+    base64: string,
+    contentType: string
+  ) => Promise<string | undefined>;
+  getFileFromPath: (path: string) => Promise<string | undefined>;
 };
 
 const SupabaseContext = createContext<Partial<ProviderProps>>({});
@@ -139,10 +154,16 @@ export const SupabaseProvider = ({ children }: any) => {
   };
 
   // CRUD Cards
-  const addListCard = async (listId: string, boardId: string, title: string, position = 0) => {
+  const addListCard = async (
+    listId: string,
+    boardId: string,
+    title: string,
+    position = 0,
+    image_url: string | null = null
+  ) => {
     return await client
       .from(CARDS_TABLE)
-      .insert({ board_id: boardId, list_id: listId, title, position })
+      .insert({ board_id: boardId, list_id: listId, title, position, image_url })
       .select('*')
       .single();
   };
@@ -188,6 +209,24 @@ export const SupabaseProvider = ({ children }: any) => {
     return members;
   };
 
+  const uploadFile = async (filePath: string, base64: string, contentType: string) => {
+    const { data } = await client.storage
+      .from(FILES_BUCKET)
+      .upload(filePath, decode(base64), { contentType });
+
+    return data?.path;
+  };
+
+  const getFileFromPath = async (path: string) => {
+    const { data } = await client.storage.from(FILES_BUCKET).createSignedUrl(path, 60 * 60, {
+      transform: {
+        width: 300,
+        height: 200,
+      },
+    });
+    return data?.signedUrl;
+  };
+
   const value = {
     userId,
     createBoard,
@@ -206,6 +245,8 @@ export const SupabaseProvider = ({ children }: any) => {
     findUsers,
     addUserToBoard,
     getBoardMember,
+    uploadFile,
+    getFileFromPath,
   };
 
   return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>;

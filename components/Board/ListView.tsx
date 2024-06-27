@@ -3,7 +3,7 @@ import { CARDS_TABLE, useSupabase } from '@/context/SupabaseContext';
 import { Task, TaskList } from '@/types/enums';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, Image } from 'react-native';
 import DraggableFlatList, {
   DragEndParams,
   RenderItemParams,
@@ -17,23 +17,34 @@ import {
 } from '@gorhom/bottom-sheet';
 import { DefaultTheme } from '@react-navigation/native';
 import { client } from '@/utils/supabaseClient';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+import { useAuth } from '@clerk/clerk-expo';
 
 export interface ListViewProps {
   taskList: TaskList;
 }
 
 const ListView = ({ taskList }: ListViewProps) => {
-  const { getListCards, addListCard, updateCard, deleteBoardList, updateBoardList } = useSupabase();
+  const {
+    getListCards,
+    addListCard,
+    updateCard,
+    deleteBoardList,
+    updateBoardList,
+    uploadFile,
+    getFileFromPath,
+  } = useSupabase();
   const [isAdding, setIsAdding] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState<any[]>([]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['40%'], []);
   const [listName, setListName] = useState(taskList.title);
+  const { userId } = useAuth();
 
   useEffect(() => {
     loadListTasks();
-    console.log('create subscription');
 
     const subscription = client
       .channel(`card-changes-${taskList.id}`)
@@ -101,6 +112,16 @@ const ListView = ({ taskList }: ListViewProps) => {
   };
 
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<Task>) => {
+    const [imagePath, setImagePath] = useState<string>('');
+    if (item.image_url) {
+      // console.log('🚀 ~ load item image:', item);
+      getFileFromPath!(item.image_url).then((path) => {
+        console.log('image path:', path);
+        if (path) {
+          setImagePath(path);
+        }
+      });
+    }
     return (
       <ScaleDecorator>
         <TouchableOpacity
@@ -113,7 +134,26 @@ const ListView = ({ taskList }: ListViewProps) => {
               opacity: isActive ? 0.5 : 1,
             },
           ]}>
-          <Text>{item.title}</Text>
+          <>
+            {item.image_url && (
+              <>
+                {imagePath && (
+                  <Image
+                    source={{ uri: imagePath }}
+                    style={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 4,
+                      backgroundColor: '#f3f3f3',
+                    }}
+                  />
+                )}
+
+                <Text>{item.title}</Text>
+              </>
+            )}
+            {!item.image_url && <Text>{item.title}</Text>}
+          </>
         </TouchableOpacity>
       </ScaleDecorator>
     );
@@ -137,6 +177,36 @@ const ListView = ({ taskList }: ListViewProps) => {
   const onUpdateTaskList = async () => {
     const updated = await updateBoardList!(taskList, listName);
     console.log('🚀 ~ onUpdateTaskList ~ updated:', updated);
+  };
+
+  const onSelectImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const img = result.assets[0];
+      console.log('🚀 ~ onSelectImage ~ img:', img);
+      const base64 = await FileSystem.readAsStringAsync(img.uri, { encoding: 'base64' });
+      const fileName = `${new Date().getTime()}-${userId}.${img.type === 'image' ? 'png' : 'mp4'}`;
+      const filePath = `${taskList.board_id}/${fileName}`;
+      const contentType = img.type === 'image' ? 'image/png' : 'video/mp4';
+      const storagePath = await uploadFile!(filePath, base64, contentType);
+
+      if (storagePath) {
+        const { data } = await addListCard!(
+          taskList.id,
+          taskList.board_id,
+          fileName,
+          tasks.length,
+          storagePath
+        );
+        console.log('🚀 ~ after add card ~ data:', data);
+      }
+    }
   };
 
   const renderBackdrop = useCallback(
@@ -186,6 +256,9 @@ const ListView = ({ taskList }: ListViewProps) => {
                 onPress={() => setIsAdding(true)}>
                 <Ionicons name="add" size={14} />
                 <Text style={{ fontSize: 12 }}>Add card</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onSelectImage}>
+                <Ionicons name="image-outline" size={18} />
               </TouchableOpacity>
             </View>
           )}

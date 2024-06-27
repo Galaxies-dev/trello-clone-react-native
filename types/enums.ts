@@ -40,6 +40,7 @@ export interface Task {
   description: null;
   assigned_to: null;
   done: boolean;
+  image_url?: string;
   created_at: string;
 }
 
