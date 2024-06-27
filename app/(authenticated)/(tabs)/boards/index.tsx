@@ -19,7 +19,6 @@ const Page = () => {
 
   const loadBoards = async () => {
     const data = await getBoards!();
-    console.log('🚀 ~ loadBoards ~ data:', data);
     setBoards(data);
   };
 

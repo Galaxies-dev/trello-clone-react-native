@@ -13,7 +13,7 @@ export const FILES_BUCKET = 'files';
 
 type ProviderProps = {
   userId: string | null;
-  createBoard: (title: string) => Promise<any>;
+  createBoard: (title: string, background: string) => Promise<any>;
   getBoards: () => Promise<any>;
   getBoardInfo: (boardId: string) => Promise<any>;
   updateBoard: (board: Board) => Promise<any>;
@@ -65,8 +65,10 @@ export const SupabaseProvider = ({ children }: any) => {
     client.realtime.setAuth(clerkToken!);
   };
 
-  const createBoard = async (title: string) => {
-    const { data, error } = await client.from(BOARDS_TABLE).insert({ title, creator: userId });
+  const createBoard = async (title: string, background: string) => {
+    const { data, error } = await client
+      .from(BOARDS_TABLE)
+      .insert({ title, creator: userId, background });
 
     if (error) {
       console.error('Error creating board:', error);
@@ -214,6 +216,8 @@ export const SupabaseProvider = ({ children }: any) => {
     id: string,
     handleRealtimeChanges: (update: any) => void
   ) => {
+    console.log('Creating a realtime connection...');
+
     return client
       .channel(`card-changes-${id}`)
       .on(

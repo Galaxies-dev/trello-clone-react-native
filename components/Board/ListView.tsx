@@ -72,8 +72,9 @@ const ListView = ({ taskList }: ListViewProps) => {
           .sort((a, b) => a.position - b.position);
       });
     } else if (event === 'DELETE') {
-      const updatedTasks = tasks.filter((task) => task.id !== record.id);
-      setTasks(updatedTasks);
+      setTasks((prev) => {
+        return prev.filter((task) => task.id !== record.id);
+      });
     } else {
       console.log('Unhandled event', event);
     }
@@ -159,7 +160,7 @@ const ListView = ({ taskList }: ListViewProps) => {
         style={{
           paddingTop: 20,
           paddingHorizontal: 30,
-          maxHeight: '90%',
+          maxHeight: '88%',
         }}>
         <View style={[styles.card]}>
           <View style={styles.header}>
@@ -176,7 +177,7 @@ const ListView = ({ taskList }: ListViewProps) => {
             onDragBegin={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
             onPlaceholderIndexChange={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
             containerStyle={{
-              paddingBottom: 16,
+              paddingBottom: 4,
               maxHeight: '85%',
             }}
             contentContainerStyle={{ gap: 4 }}
@@ -190,7 +191,7 @@ const ListView = ({ taskList }: ListViewProps) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               paddingHorizontal: 8,
-              marginBottom: 8,
+              marginVertical: 8,
             }}>
             {!isAdding && (
               <>
@@ -273,6 +274,7 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 8,
+    marginBottom: 12,
     backgroundColor: '#fff',
     elevation: 1,
     shadowColor: '#000',

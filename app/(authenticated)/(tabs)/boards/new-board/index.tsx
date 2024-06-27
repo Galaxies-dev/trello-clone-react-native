@@ -1,17 +1,26 @@
+import { DEFAULT_COLOR } from '@/app/(authenticated)/(tabs)/boards/new-board/color-select';
 import { Colors } from '@/constants/Colors';
 import { useSupabase } from '@/context/SupabaseContext';
 import { Ionicons } from '@expo/vector-icons';
-import { Link, Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { Link, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
 const Page = () => {
   const [boardName, setBoardName] = useState('');
   const { createBoard } = useSupabase();
   const router = useRouter();
+  const { bg } = useGlobalSearchParams<{ bg?: string }>();
+  const [selectedColor, setSelectedColor] = useState<string>(DEFAULT_COLOR);
+
+  useEffect(() => {
+    if (bg) {
+      setSelectedColor(bg);
+    }
+  }, [bg]);
 
   const onCreateBoard = async () => {
-    await createBoard!(boardName);
+    await createBoard!(boardName, selectedColor);
     router.dismiss();
   };
 
@@ -37,6 +46,7 @@ const Page = () => {
       <Link href={'/(authenticated)/(tabs)/boards/new-board/color-select'} asChild>
         <TouchableOpacity style={styles.btnItem}>
           <Text style={styles.btnItemText}>Background</Text>
+          <View style={[styles.colorPreview, { backgroundColor: selectedColor }]} />
           <Ionicons name="chevron-forward" size={22} color={Colors.grey} />
         </TouchableOpacity>
       </Link>
@@ -74,6 +84,11 @@ const styles = StyleSheet.create({
   btnItemText: {
     fontSize: 16,
     flex: 1,
+  },
+  colorPreview: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
   },
 });
 export default Page;
