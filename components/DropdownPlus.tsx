@@ -27,9 +27,7 @@ const DropdownPlus = () => {
               }}></DropdownMenu.ItemIcon>
           </DropdownMenu.Item>
 
-          <DropdownMenu.Item
-            key="card"
-            onSelect={() => router.push('(authenticated)/(tabs)/boards/new-card')}>
+          <DropdownMenu.Item key="card">
             <DropdownMenu.ItemTitle>Create a card</DropdownMenu.ItemTitle>
             <DropdownMenu.ItemIcon
               ios={{

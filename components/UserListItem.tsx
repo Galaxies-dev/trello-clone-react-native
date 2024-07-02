@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Colors';
 import { User } from '@/types/enums';
-import { TouchableOpacity, Image, Text, StyleSheet, View, ListRenderItemInfo } from 'react-native';
+import { TouchableOpacity, Image, Text, View, ListRenderItemInfo } from 'react-native';
 
 interface UserListItemProps {
   element: ListRenderItemInfo<User>;

@@ -82,20 +82,9 @@ export const SupabaseProvider = ({ children }: any) => {
   };
 
   const getBoards = async () => {
-    // const { data, error } = await client.from(BOARDS_TABLE).select('*').eq('creator', userId);
-
-    // if (error) {
-    //   console.error('Error getting boards:', error);
-    // }
-
-    // return data;
     const { data } = await client
       .from(USER_BOARDS_TABLE)
-      .select(
-        `
-      boards ( title, id, background )
-    `
-      )
+      .select(`boards ( title, id, background )`)
       .eq('user_id', userId);
     const boards = data?.map((b: any) => b.boards);
 

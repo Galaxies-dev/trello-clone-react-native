@@ -26,11 +26,14 @@ Additional features:
 <img src="./screenshots/8.png" width=30%>
 <img src="./screenshots/9.png" width=30%>
 <img src="./screenshots/10.png" width=30%>
+<img src="./screenshots/11.png" width=30%>
+<img src="./screenshots/12.png" width=30%>
 </div>
 
 ## Demo
 
 <div style="display: flex; flex-direction: 'row';">
+<img src="./screenshots/auth.gif" width=30%>
 <img src="./screenshots/board.gif" width=30%>
 <img src="./screenshots/list.gif" width=30%>
 <img src="./screenshots/card.gif" width=30%>

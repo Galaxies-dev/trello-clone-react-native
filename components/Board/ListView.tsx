@@ -43,7 +43,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     loadListTasks();
 
     const subscription = getRealtimeCardSubscription!(taskList.id, handleRealtimeChanges);
-    console.log('🚀 ~ useEffect ~ subscription:', subscription);
 
     return () => {
       subscription.unsubscribe();
@@ -98,6 +97,7 @@ const ListView = ({ taskList }: ListViewProps) => {
       setIsAdding(false);
       setNewTask('');
     }
+    // Unnecessary when using realtime updates
     // setTasks([...tasks, data]);
   };
 
@@ -105,7 +105,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     const newData = params.data.map((item: any, index: number) => {
       return { ...item, position: index };
     });
-    console.log('NEWDATA: ', newData);
 
     setTasks(newData);
     newData.forEach(async (item: any) => {
@@ -120,7 +119,6 @@ const ListView = ({ taskList }: ListViewProps) => {
 
   const onUpdateTaskList = async () => {
     const updated = await updateBoardList!(taskList, listName);
-    console.log('🚀 ~ onUpdateTaskList ~ updated:', updated);
   };
 
   const onSelectImage = async () => {
@@ -267,12 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3EFFC',
     borderRadius: 4,
     padding: 6,
-    // height: '100%',
     marginBottom: 16,
-    // width: '100%',
-    // overflow: 'scroll',
-    // flex: 0,
-    // flexGrow: 1,
   },
   header: {
     flexDirection: 'row',
