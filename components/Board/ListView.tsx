@@ -47,7 +47,7 @@ const ListView = ({ taskList }: ListViewProps) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [taskList.id]);
 
   const handleRealtimeChanges = (update: any) => {
     console.log('REALTIME UPDATE:', update);
@@ -69,6 +69,7 @@ const ListView = ({ taskList }: ListViewProps) => {
             }
             return task;
           })
+          .filter((task) => !task.done)
           .sort((a, b) => a.position - b.position);
       });
     } else if (event === 'DELETE') {
@@ -103,7 +104,9 @@ const ListView = ({ taskList }: ListViewProps) => {
     const newData = params.data.map((item: any, index: number) => {
       return { ...item, position: index };
     });
-    // setTasks(newData);
+    console.log('NEWDATA: ', newData);
+
+    setTasks(newData);
     newData.forEach(async (item: any) => {
       await updateCard!(item);
     });
@@ -176,6 +179,7 @@ const ListView = ({ taskList }: ListViewProps) => {
             onDragEnd={onTaskDropped}
             onDragBegin={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
             onPlaceholderIndexChange={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            activationDistance={10}
             containerStyle={{
               paddingBottom: 4,
               maxHeight: '85%',

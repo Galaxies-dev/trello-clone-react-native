@@ -27,7 +27,6 @@ const Page = () => {
     setBoard(data);
 
     const member = await getBoardMember!(id);
-    console.log('board member:', member);
     setMember(member);
   };
 

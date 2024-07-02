@@ -31,7 +31,9 @@ type ProviderProps = {
     image_url?: string | null
   ) => Promise<any>;
   updateCard: (task: Task) => Promise<any>;
+  assignCard: (cardId: string, userId: string) => Promise<any>;
   deleteCard: (id: string) => Promise<any>;
+  getCardInfo: (id: string) => Promise<any>;
   findUsers: (search: string) => Promise<any>;
   addUserToBoard: (boardId: string, userId: string) => Promise<any>;
   getBoardMember: (boardId: string) => Promise<any>;
@@ -176,17 +178,42 @@ export const SupabaseProvider = ({ children }: any) => {
       .from(CARDS_TABLE)
       .select('*')
       .eq('list_id', listId)
+      .eq('done', false)
       .order('position');
 
     return lists.data || [];
   };
 
   const updateCard = async (task: Task) => {
-    return await client.from(CARDS_TABLE).update(task).match({ id: task.id });
+    return await client
+      .from(CARDS_TABLE)
+      .update({
+        title: task.title,
+        description: task.description,
+        done: task.done,
+      })
+      .match({ id: task.id });
+  };
+
+  const assignCard = async (cardId: string, userId: string) => {
+    return await client
+      .from(CARDS_TABLE)
+      .upsert({ id: cardId, assigned_to: userId })
+      .select('*')
+      .single();
   };
 
   const deleteCard = async (id: string) => {
     return await client.from(CARDS_TABLE).delete().match({ id: id });
+  };
+
+  const getCardInfo = async (id: string) => {
+    const { data } = await client
+      .from(CARDS_TABLE)
+      .select(`*, users (*), boards(*)`)
+      .match({ id })
+      .single();
+    return data;
   };
 
   const findUsers = async (search: string) => {
@@ -260,7 +287,9 @@ export const SupabaseProvider = ({ children }: any) => {
     getListCards,
     addListCard,
     updateCard,
+    assignCard,
     deleteCard,
+    getCardInfo,
     findUsers,
     addUserToBoard,
     getBoardMember,

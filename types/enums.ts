@@ -37,8 +37,8 @@ export interface Task {
   board_id: number;
   position: number;
   title: string;
-  description: null;
-  assigned_to: null;
+  description: string | null;
+  assigned_to: string | null;
   done: boolean;
   image_url?: string;
   created_at: string;
