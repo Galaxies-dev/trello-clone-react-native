@@ -59,3 +59,20 @@ create policy "Users can edit cards if they are part of the board" on cards for
         select get_boards_for_authenticated_user()
       )
     );
+
+-- users row level security
+alter table users enable row level security;
+
+-- Policies
+create policy "Users can view other users data"
+on users
+to authenticated
+using (
+  true
+);
+
+
+create policy "Users can update their own user" on users for
+    update using (
+      id = requesting_user_id()
+    );

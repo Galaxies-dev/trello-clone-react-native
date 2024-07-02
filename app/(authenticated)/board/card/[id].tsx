@@ -23,7 +23,9 @@ import { DefaultTheme } from '@react-navigation/native';
 import UserListItem from '@/components/UserListItem';
 
 const Page = () => {
-  const { id, board_id } = useLocalSearchParams<{ id: string; board_id?: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  console.log('🚀 ~ Page ~ id:', id);
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);
   const { getCardInfo, getBoardMember, getFileFromPath, updateCard, assignCard } = useSupabase();
@@ -45,13 +47,13 @@ const Page = () => {
   }, [id]);
 
   const loadInfo = async () => {
-    if (!board_id || !id) return;
+    if (!id) return;
 
     const data = await getCardInfo!(id);
     console.log('🚀 ~ loadInfo ~ cardData:', data);
     setCard(data);
 
-    const member = await getBoardMember!(board_id);
+    const member = await getBoardMember!(data.board_id);
     console.log('🚀 ~ loadInfo ~ member:', member);
     setMember(member);
   };
@@ -68,7 +70,9 @@ const Page = () => {
 
   const onAssignUser = async (user: User) => {
     console.log('assigning user', user.id);
-    const { data } = await assignCard!(card!.id, user.id);
+    const { data, error } = await assignCard!(card!.id, user.id);
+    console.log('error: ', error);
+
     console.log('🚀 ~ onAssignUser ~ result', data);
     setCard(data);
     bottomSheetModalRef.current?.close();

@@ -1,50 +1,50 @@
-# Welcome to your Expo app 👋
+# React Native Trello Clone with Clerk & Supabase
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is a React Native Trello clone using [Clerk](https://go.clerk.com/wvMHe8T) for user authentication and [Supabase](https://supabase.com/) for all backend logic.
 
-## Get started
+Additional features:
 
-1. Install dependencies
+- [Expo Router](https://docs.expo.dev/routing/introduction/) file-based navigation
+- [Supabase Edge Functions](https://supabase.com/edge-functions) for push notifications
+- [Supabase Realtime](https://supabase.com/realtime) for real-time database updates
+- [Supabase Storage](https://supabase.com/storage) for file storage
+- [Zeego](https://zeego.dev/start) for native menus
+- [Bottom Sheet](https://ui.gorhom.dev/components/bottom-sheet/) for bottom sheet component
+- [Reanimated Carousel](https://github.com/dohooo/react-native-reanimated-carousel) for carousel component
+- [Draggable Flatlist](https://github.com/computerjazz/react-native-draggable-flatlist) for drag-and-drop lists
 
-   ```bash
-   npm install
-   ```
+## Screenshots
 
-2. Start the app
+<div style="display: flex; flex-direction: 'row';">
+<img src="./screenshots/1.png" width=30%>
+<img src="./screenshots/2.png" width=30%>
+<img src="./screenshots/3.png" width=30%>
+<img src="./screenshots/4.png" width=30%>
+<img src="./screenshots/5.png" width=30%>
+<img src="./screenshots/6.png" width=30%>
+<img src="./screenshots/7.png" width=30%>
+<img src="./screenshots/8.png" width=30%>
+<img src="./screenshots/9.png" width=30%>
+<img src="./screenshots/10.png" width=30%>
+</div>
 
-   ```bash
-    npx expo start
-   ```
+## Demo
 
-In the output, you'll find options to open the app in a
+<div style="display: flex; flex-direction: 'row';">
+<img src="./screenshots/board.gif" width=30%>
+<img src="./screenshots/list.gif" width=30%>
+<img src="./screenshots/card.gif" width=30%>
+<img src="./screenshots/draganddrop.gif" width=30%>
+<img src="./screenshots/push.gif" width=30%>
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+</div>
 
-When you're ready, run:
+## 🚀 More
 
-```bash
-npm run reset-project
-```
+**Take a shortcut from web developer to mobile development fluency with guided learning**
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Enjoyed this project? Learn to use React Native to build production-ready, native mobile apps for both iOS and Android based on your existing web development skills.
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<a href="https://galaxies.dev"><img src="banner.png" height="auto" width="100%"></a>

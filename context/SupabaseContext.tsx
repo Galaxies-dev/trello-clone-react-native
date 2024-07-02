@@ -44,6 +44,7 @@ type ProviderProps = {
     contentType: string
   ) => Promise<string | undefined>;
   getFileFromPath: (path: string) => Promise<string | undefined>;
+  setUserPushToken: (token: string) => Promise<any>;
 };
 
 const SupabaseContext = createContext<Partial<ProviderProps>>({});
@@ -63,6 +64,7 @@ export const SupabaseProvider = ({ children }: any) => {
     const clerkToken = await window.Clerk.session?.getToken({
       template: 'supabase',
     });
+    console.log('clerkToken', clerkToken);
 
     client.realtime.setAuth(clerkToken!);
   };
@@ -274,6 +276,18 @@ export const SupabaseProvider = ({ children }: any) => {
     return data?.signedUrl;
   };
 
+  const setUserPushToken = async (token: string) => {
+    const { data, error } = await client
+      .from(USERS_TABLE)
+      .upsert({ id: userId, push_token: token });
+
+    if (error) {
+      console.error('Error setting push token:', error);
+    }
+
+    return data;
+  };
+
   const value = {
     userId,
     createBoard,
@@ -297,6 +311,7 @@ export const SupabaseProvider = ({ children }: any) => {
     getRealtimeCardSubscription,
     uploadFile,
     getFileFromPath,
+    setUserPushToken,
   };
 
   return <SupabaseContext.Provider value={value}>{children}</SupabaseContext.Provider>;

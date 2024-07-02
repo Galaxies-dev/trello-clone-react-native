@@ -19,7 +19,8 @@ create table
     username TEXT,
     first_name TEXT,
     email TEXT,
-    avatar_url TEXT
+    avatar_url TEXT,
+    push_token TEXT,
   );
 
 -- Create boards table

@@ -43,6 +43,7 @@ const ListView = ({ taskList }: ListViewProps) => {
     loadListTasks();
 
     const subscription = getRealtimeCardSubscription!(taskList.id, handleRealtimeChanges);
+    console.log('🚀 ~ useEffect ~ subscription:', subscription);
 
     return () => {
       subscription.unsubscribe();
@@ -123,12 +124,15 @@ const ListView = ({ taskList }: ListViewProps) => {
   };
 
   const onSelectImage = async () => {
+    // await ImagePicker.requestCameraPermissionsAsync();
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+
+    console.log(result);
 
     if (!result.canceled) {
       const img = result.assets[0];

@@ -7,8 +7,11 @@ create table notifications (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 -- Create trigger function for notifications
-create
-or replace function notify_user () returns trigger language plpgsql as $$
+create or replace function notify_user ()
+returns trigger
+language plpgsql
+security definer
+as $$
 begin
   if new.assigned_to <> old.assigned_to then
     insert into notifications (user_id, body, card_id)
@@ -22,3 +25,6 @@ $$;
 create trigger on_card_assigned
   before update on cards
   for each row execute procedure notify_user();
+
+-- notifications row level security
+alter table notifications enable row level security;

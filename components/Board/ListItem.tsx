@@ -19,7 +19,7 @@ const ListItem = ({ item, drag, isActive }: RenderItemParams<Task>) => {
   }
 
   const openLink = () => {
-    router.push(`/board/card/${item.id}?board_id=${encodeURIComponent(item.board_id)}`);
+    router.push(`/board/card/${item.id}`);
   };
 
   return (
