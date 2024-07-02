@@ -13,7 +13,7 @@ Additional features:
 - [Reanimated Carousel](https://github.com/dohooo/react-native-reanimated-carousel) for carousel component
 - [Draggable Flatlist](https://github.com/computerjazz/react-native-draggable-flatlist) for drag-and-drop lists
 
-## Screenshots
+## App Screenshots
 
 <div style="display: flex; flex-direction: 'row';">
 <img src="./screenshots/1.png" width=30%>
@@ -28,6 +28,16 @@ Additional features:
 <img src="./screenshots/10.png" width=30%>
 <img src="./screenshots/11.png" width=30%>
 <img src="./screenshots/12.png" width=30%>
+</div>
+
+## Supabase Screenshots
+
+<div style="display: flex; flex-direction: 'row';">
+<img src="./screenshots/supa1.png" width=100%>
+<img src="./screenshots/supa2.png" width=100%>
+<img src="./screenshots/supa3.png" width=100%>
+<img src="./screenshots/supa4.png" width=100%>
+<img src="./screenshots/supa5.png" width=100%>
 </div>
 
 ## Demo
