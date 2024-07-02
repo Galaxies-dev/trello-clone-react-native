@@ -1,8 +1,9 @@
 import { useSupabase } from '@/context/SupabaseContext';
 import { Task } from '@/types/enums';
-import { Link, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, Text, View } from 'react-native';
 import { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
 
 const ListItem = ({ item, drag, isActive }: RenderItemParams<Task>) => {
@@ -48,10 +49,20 @@ const ListItem = ({ item, drag, isActive }: RenderItemParams<Task>) => {
               />
             )}
 
-            <Text>{item.title}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ flex: 1 }}>{item.title}</Text>
+              {item.assigned_to && (
+                <Ionicons name="person-circle-outline" size={16} color={'#000'} />
+              )}
+            </View>
           </>
         )}
-        {!item.image_url && <Text>{item.title}</Text>}
+        {!item.image_url && (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ flex: 1 }}>{item.title}</Text>
+            {item.assigned_to && <Ionicons name="person-circle-outline" size={16} color={'#000'} />}
+          </View>
+        )}
       </TouchableOpacity>
     </ScaleDecorator>
   );

@@ -32,7 +32,7 @@ export interface TaskListFake {
 }
 
 export interface Task {
-  id: number;
+  id: string;
   list_id: number;
   board_id: number;
   position: number;
@@ -42,6 +42,7 @@ export interface Task {
   done: boolean;
   image_url?: string;
   created_at: string;
+  users?: User;
 }
 
 export interface User {

@@ -198,8 +198,9 @@ export const SupabaseProvider = ({ children }: any) => {
   const assignCard = async (cardId: string, userId: string) => {
     return await client
       .from(CARDS_TABLE)
-      .upsert({ id: cardId, assigned_to: userId })
-      .select('*')
+      .update({ assigned_to: userId })
+      .match({ id: cardId })
+      .select('*, users (first_name, email, avatar_url)')
       .single();
   };
 

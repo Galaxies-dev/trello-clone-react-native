@@ -182,7 +182,7 @@ const ListView = ({ taskList }: ListViewProps) => {
             activationDistance={10}
             containerStyle={{
               paddingBottom: 4,
-              maxHeight: '85%',
+              maxHeight: '80%',
             }}
             contentContainerStyle={{ gap: 4 }}
           />
