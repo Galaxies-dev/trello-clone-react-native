@@ -1,6 +1,6 @@
 # React Native Trello Clone with Clerk & Supabase
 
-This is a React Native Trello clone using [Clerk](https://go.clerk.com/wvMHe8T) for user authentication and [Supabase](https://supabase.com/) for all backend logic.
+This is a React Native Trello clone using [Clerk](https://go.clerk.com/ztAWdYK) for user authentication and [Supabase](https://supabase.com/?utm_source=youtube&utm_medium=referral&utm_campaign=yt-collab-trello-clone) for all backend logic.
 
 Additional features:
 
