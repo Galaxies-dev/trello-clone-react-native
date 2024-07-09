@@ -3,6 +3,7 @@ drop table if exists cards;
 drop table if exists lists;
 drop table if exists boards;
 drop table if exists users;
+drop table if exists notifications;
 
 -- Create users table
 create table
@@ -12,7 +13,7 @@ create table
     first_name TEXT,
     email TEXT,
     avatar_url TEXT,
-    push_token TEXT,
+    push_token TEXT
   );
 
 -- Create boards table
@@ -21,7 +22,7 @@ create table boards (
   creator text NOT NULL REFERENCES users (id),
   title text default 'Untitled Board',
   background text default '#126CB3',
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   last_edit timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
