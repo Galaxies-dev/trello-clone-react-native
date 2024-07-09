@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useWarmUpBrowser } from '@/hooks/useWarmUpBrowser';
-import { useOAuth } from '@clerk/clerk-expo';
+import { useOAuth, useSignIn, useSignUp } from '@clerk/clerk-expo';
 
 const LOGIN_OPTIONS = [
   {
@@ -38,8 +38,12 @@ const AuthModal = ({ authType }: AuthModalProps) => {
   const { startOAuthFlow: microsoftAuth } = useOAuth({ strategy: AuthStrategy.Microsoft });
   const { startOAuthFlow: slackAuth } = useOAuth({ strategy: AuthStrategy.Slack });
   const { startOAuthFlow: appleAuth } = useOAuth({ strategy: AuthStrategy.Apple });
+  const { signUp, setActive } = useSignUp();
+  const { signIn } = useSignIn();
 
   const onSelectAuth = async (strategy: AuthStrategy) => {
+    if (!signIn || !signUp) return null;
+
     const selectedAuth = {
       [AuthStrategy.Google]: googleAuth,
       [AuthStrategy.Microsoft]: microsoftAuth,
@@ -47,15 +51,49 @@ const AuthModal = ({ authType }: AuthModalProps) => {
       [AuthStrategy.Apple]: appleAuth,
     }[strategy];
 
-    try {
-      const { createdSessionId, setActive } = await selectedAuth();
+    // https://clerk.com/docs/custom-flows/oauth-connections#o-auth-account-transfer-flows
+    // If the user has an account in your application, but does not yet
+    // have an OAuth account connected to it, you can transfer the OAuth
+    // account to the existing user account.
+    const userExistsButNeedsToSignIn =
+      signUp.verifications.externalAccount.status === 'transferable' &&
+      signUp.verifications.externalAccount.error?.code === 'external_account_exists';
 
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
-        console.log('OAuth success');
+    if (userExistsButNeedsToSignIn) {
+      const res = await signIn.create({ transfer: true });
+
+      if (res.status === 'complete') {
+        setActive({
+          session: res.createdSessionId,
+        });
       }
-    } catch (err) {
-      console.error('OAuth error', err);
+    }
+
+    const userNeedsToBeCreated = signIn.firstFactorVerification.status === 'transferable';
+
+    if (userNeedsToBeCreated) {
+      const res = await signUp.create({
+        transfer: true,
+      });
+
+      if (res.status === 'complete') {
+        setActive({
+          session: res.createdSessionId,
+        });
+      }
+    } else {
+      // If the user has an account in your application
+      // and has an OAuth account connected to it, you can sign them in.
+      try {
+        const { createdSessionId, setActive } = await selectedAuth();
+
+        if (createdSessionId) {
+          setActive!({ session: createdSessionId });
+          console.log('OAuth success standard');
+        }
+      } catch (err) {
+        console.error('OAuth error', err);
+      }
     }
   };
 
