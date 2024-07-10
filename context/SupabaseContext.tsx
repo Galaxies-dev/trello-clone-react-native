@@ -3,6 +3,7 @@ import { client } from '@/utils/supabaseClient';
 import { useAuth } from '@clerk/clerk-expo';
 import { Board, Task, TaskList } from '@/types/enums';
 import { decode } from 'base64-arraybuffer';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export const BOARDS_TABLE = 'boards';
 export const USER_BOARDS_TABLE = 'user_boards';
@@ -37,7 +38,10 @@ type ProviderProps = {
   findUsers: (search: string) => Promise<any>;
   addUserToBoard: (boardId: string, userId: string) => Promise<any>;
   getBoardMember: (boardId: string) => Promise<any>;
-  getRealtimeCardSubscription: (id: string, handleRealtimeChanges: (update: any) => void) => any;
+  getRealtimeCardSubscription: (
+    id: string,
+    handleRealtimeChanges: (update: RealtimePostgresChangesPayload<any>) => void
+  ) => any;
   uploadFile: (
     filePath: string,
     base64: string,
@@ -64,7 +68,6 @@ export const SupabaseProvider = ({ children }: any) => {
     const clerkToken = await window.Clerk.session?.getToken({
       template: 'supabase',
     });
-    console.log('clerkToken', clerkToken);
 
     client.realtime.setAuth(clerkToken!);
   };
@@ -233,7 +236,7 @@ export const SupabaseProvider = ({ children }: any) => {
 
   const getRealtimeCardSubscription = (
     id: string,
-    handleRealtimeChanges: (update: any) => void
+    handleRealtimeChanges: (update: RealtimePostgresChangesPayload<any>) => void
   ) => {
     console.log('Creating a realtime connection...');
 

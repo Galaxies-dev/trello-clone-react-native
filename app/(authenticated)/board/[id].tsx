@@ -27,7 +27,6 @@ const Page = () => {
     if (!id) return;
 
     const data = await getBoardInfo!(id);
-    console.log('🚀 ~ loadBoardInfo ~ data:', data);
     setBoard(data);
   };
 

@@ -49,6 +49,10 @@ const BoardArea = ({ board }: BoardAreaProps) => {
     });
   };
 
+  const onListDeleted = (id: string) => {
+    setData(data.filter((item) => item.id !== id));
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
       <Carousel
@@ -62,7 +66,9 @@ const BoardArea = ({ board }: BoardAreaProps) => {
         pagingEnabled={true}
         renderItem={({ index, item }: any) => (
           <>
-            {item.id && <ListView key={index} taskList={item as TaskList} />}
+            {item.id && (
+              <ListView key={index} taskList={item} onDelete={() => onListDeleted(item.id)} />
+            )}
             {item.id === undefined && (
               <View key={index} style={{ paddingTop: 20, paddingHorizontal: 30 }}>
                 {!startListActive && (

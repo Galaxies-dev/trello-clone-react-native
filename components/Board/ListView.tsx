@@ -16,12 +16,14 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useAuth } from '@clerk/clerk-expo';
 import ListItem from '@/components/Board/ListItem';
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 export interface ListViewProps {
   taskList: TaskList;
+  onDelete: () => void;
 }
 
-const ListView = ({ taskList }: ListViewProps) => {
+const ListView = ({ taskList, onDelete }: ListViewProps) => {
   const {
     getListCards,
     addListCard,
@@ -34,8 +36,10 @@ const ListView = ({ taskList }: ListViewProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState<any[]>([]);
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['40%'], []);
+
   const [listName, setListName] = useState(taskList.title);
   const { userId } = useAuth();
 
@@ -49,7 +53,7 @@ const ListView = ({ taskList }: ListViewProps) => {
     };
   }, [taskList.id]);
 
-  const handleRealtimeChanges = (update: any) => {
+  const handleRealtimeChanges = (update: RealtimePostgresChangesPayload<any>) => {
     console.log('REALTIME UPDATE:', update);
     const record = update.new?.id ? update.new : update.old;
     const event = update.eventType;
@@ -86,6 +90,16 @@ const ListView = ({ taskList }: ListViewProps) => {
     setTasks(data);
   };
 
+  const onDeleteList = async () => {
+    await deleteBoardList!(taskList.id);
+    bottomSheetModalRef.current?.close();
+    onDelete;
+  };
+
+  const onUpdateTaskList = async () => {
+    const updated = await updateBoardList!(taskList, listName);
+  };
+
   const onAddCard = async () => {
     const { data, error } = await addListCard!(
       taskList.id,
@@ -112,15 +126,6 @@ const ListView = ({ taskList }: ListViewProps) => {
     });
   };
 
-  const onDeleteList = async () => {
-    await deleteBoardList!(taskList.id);
-    bottomSheetModalRef.current?.close();
-  };
-
-  const onUpdateTaskList = async () => {
-    const updated = await updateBoardList!(taskList, listName);
-  };
-
   const onSelectImage = async () => {
     // await ImagePicker.requestCameraPermissionsAsync();
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -129,8 +134,6 @@ const ListView = ({ taskList }: ListViewProps) => {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       const img = result.assets[0];
@@ -174,6 +177,7 @@ const ListView = ({ taskList }: ListViewProps) => {
               <MaterialCommunityIcons name="dots-horizontal" size={22} color={Colors.grey} />
             </TouchableOpacity>
           </View>
+
           <DraggableFlatList
             data={tasks}
             renderItem={ListItem}

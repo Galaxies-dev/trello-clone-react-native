@@ -70,7 +70,6 @@ const RootLayoutNav = () => {
       <StatusBar style="light" />
       <ActionSheetProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar style="light" />
           <InitialLayout />
         </GestureHandlerRootView>
       </ActionSheetProvider>
