@@ -24,15 +24,17 @@ import UserListItem from '@/components/UserListItem';
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-  console.log('🚀 ~ Page ~ id:', id);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['60%'], []);
+
   const { getCardInfo, getBoardMember, getFileFromPath, updateCard, assignCard } = useSupabase();
+
   const router = useRouter();
   const [card, setCard] = useState<Task>();
   const [member, setMember] = useState<User[]>();
   const [imagePath, setImagePath] = useState<string>('');
+
   if (card?.image_url) {
     getFileFromPath!(card.image_url).then((path) => {
       if (path) {
@@ -69,11 +71,8 @@ const Page = () => {
   };
 
   const onAssignUser = async (user: User) => {
-    console.log('assigning user', user.id);
     const { data, error } = await assignCard!(card!.id, user.id);
-    console.log('error: ', error);
 
-    console.log('🚀 ~ onAssignUser ~ result', data);
     setCard(data);
     bottomSheetModalRef.current?.close();
   };
